@@ -6,6 +6,7 @@ from pymodbus.datastore import ModbusSequentialDataBlock, ModbusSlaveContext, Mo
 from pymodbus.transaction import ModbusRtuFramer, ModbusAsciiFramer, ModbusBinaryFramer
 from random import randint
 import logging
+import keyboard
 
 # Log
 
@@ -17,6 +18,8 @@ log.setLevel(logging.DEBUG)
 
 # Defining server function
 
+
+
 def start_server(address="0.0.0.0", port=502):
     """A function that start the server
 
@@ -26,15 +29,21 @@ def start_server(address="0.0.0.0", port=502):
 
     # Context
 
-    dev1 = ModbusSlaveContext(hr=ModbusSequentialDataBlock(0, [0]*10000))
-    context = ModbusServerContext(dev1)
+    thermometer1 = ModbusSlaveContext(hr=ModbusSequentialDataBlock(0, [0]*1))
+    thermometer2 = ModbusSlaveContext(hr=ModbusSequentialDataBlock(1, [0]*1))
+    barometer = ModbusSlaveContext(hr=ModbusSequentialDataBlock(2, [0]*1))
+    context = ModbusServerContext([thermometer1, thermometer2, barometer], single=True)
 
-    slave = context[0] # Slave context used in for writing a reading reg
+	
+    therm1_slave = context[0][0]  #Slave context used in for writing a reading reg
+    therm2_slave = context[0][1]
+    bar_slave = context[0][2]
 
     # Random values
 
-    random_value(slave, 0, 5)
-
+    random_value(therm1_slave, 0,)
+    print(therm1_slave.getValues(3, 0, 5))
+	
     # Identity
 
     identity = ModbusDeviceIdentification()
@@ -46,7 +55,7 @@ def start_server(address="0.0.0.0", port=502):
     # Starting server
 
     server = StartTcpServer(context, identity, (address, port))
-
+	
 
 
 def random_value(slave, address=0, count=0):
