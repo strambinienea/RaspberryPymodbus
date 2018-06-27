@@ -41,8 +41,8 @@ def start_server(address="0.0.0.0", port=502):
 
     # Random values
 
-    random_value(therm1_slave, 0,)
-    print(therm1_slave.getValues(3, 0, 5))
+    random_value(therm1_slave, 0)
+    print(therm1_slave.getValues(3, 0))
 	
     # Identity
 
@@ -59,14 +59,18 @@ def start_server(address="0.0.0.0", port=502):
 
 
 def random_value(slave, address=0, count=0):
-    """A function that randomize the value of the given registers
-    server: the istance of the server to use
-    address: the starting address of the registers
-    count: the number of register to randomize after the firs one
-    """
-    for _ in range(count):
-        slave.setValues(3, address, [randint(10, 30)])
-        address += 1
+	"""A function that randomize the value of the given registers
+	server: the istance of the server to use
+	address: the starting address of the registers
+	count: the number of register to randomize after the firs one
+	"""
+	if count == 0:
+		slave.setValues(3, address, [randint(10, 30)])
+
+	else:
+		for _ in range(count):
+			slave.setValues(3, address, [randint(10, 30)])
+			address += 1
 
 
 if __name__ == "__main__":
