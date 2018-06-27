@@ -32,11 +32,12 @@ def start_client(address, port=502):
 	client = ModbusTcpClient(address, port)
 	client.connect()
 
-	read_hr_request(register_index(1, 'T', 2), client)
+	print(register_index(1, 'T', 1))
+	read_hr_request(register_index(1, 'T', 1), client)
 
 	client.close()
 
-def read_hr_request(address, client, count=0):
+def read_hr_request(address, client, count=None):
 	"""Function that read a holding register every 10 minutes
 
 	address: the starting address of the registers
@@ -56,24 +57,19 @@ def read_hr_request(address, client, count=0):
 		#now = str(time()[0]) + "-" + str(time()[1]) + "-" + str(time()[2]) + " " + str(time()[3]) +
 
 		if int(now.split(" ")[3].split(":")[1]) % delay == 0 and first or keyboard.is_pressed('a'):			#debug
-
-			if count == 0:
+			
+			if count == None:
+				request = ReadHoldingRegistersRequest(address, 0, id=1)
+				response = client.execute(request)
+				print("[" + now + "] " + str(response))
+			else:
 				request = ReadHoldingRegistersRequest(address, count)
-				#request = ReadCoilsRequest(address, 0)														#debug
 				response = client.execute(request)
 				print("[" + now + "] " + str(response))
 
-			else:
-				for _ in range(count):
-					request = ReadHoldingRegistersRequest(address, count)
-					#request = ReadCoilsRequest(address, 0)													#debug
-					response = client.execute(request)
-					print("[" + now + "] " + str(response))
-					address += 1
-
 			first = not first
 
-		elif int(now.split(" ")[3].split(":")[1]) % delay == 0 and not first:
+		elif int(now.split(" ")[3].split(":")[1]) % delay != 0 and not first:
 			first = True
 
 		# Key pressed event check
@@ -94,8 +90,8 @@ def register_index(sector, type, index):
 	for line in open('C:/Users/rtc/Documents/GitHub/RaspberryPymodbus/registers_suddivision.txt'):
 		elements = line.split(',')
 
-		if int(elements[0]) == sector and elements[1] == type and int(elements[2]) == index:
-			return int(elements[3])
+		if eval(elements[0]) == sector and elements[1] == type and eval(elements[2]) == index:
+			return eval(elements[3])
 
 	return None
 
