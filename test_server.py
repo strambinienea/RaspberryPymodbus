@@ -22,7 +22,6 @@ log.setLevel(logging.DEBUG)
 
 def start_server(address="0.0.0.0", port=502):
     """A function that start the server
-
     address: the address of the server
     port: the port of the server
     """
