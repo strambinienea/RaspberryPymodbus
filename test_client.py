@@ -21,7 +21,6 @@ log.setLevel(logging.DEBUG)
 
 def start_client(address, port=502):
 	"""Function that start a client
-
 	address: the address to witch the client is going to connect
 	port: the port of the server to witch the client is going to connect
 	"""
@@ -39,7 +38,6 @@ def start_client(address, port=502):
 
 def read_hr_request(address, client, count=None):
 	"""Function that read a holding register every 10 minutes
-
 	address: the starting address of the registers
 	count: the number of register to read after the first one
 	client: the istance of the client to use
@@ -82,7 +80,6 @@ def read_hr_request(address, client, count=None):
 
 def register_index(sector, type, index):
 	"""Function that return the register index of a specific sensor
-
 	sector: The number of sector where the sensor is installed
 	type: A string that identifies the type of sensor (es. Thermometer - "T")
 	index: The index of the sensor (if there are moresensor of the same type)
