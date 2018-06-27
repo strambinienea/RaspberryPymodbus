@@ -91,8 +91,8 @@ def register_index(sector, type, index):
 	type: A string that identifies the type of sensor (es. Thermometer - "T")
 	index: The index of the sensor (if there are moresensor of the same type)
 	"""
-	for line in open('./registers_suddivision.txt'):
-		elements = line.split(','):
+	for line in open('C:/Users/rtc/Documents/GitHub/RaspberryPymodbus/registers_suddivision.txt'):
+		elements = line.split(',')
 
 		if int(elements[0]) == sector and elements[1] == type and int(elements[2]) == index:
 			return int(elements[3])
