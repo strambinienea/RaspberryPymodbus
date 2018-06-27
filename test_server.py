@@ -36,8 +36,8 @@ def start_server(address="0.0.0.0", port=502):
 	floor1 = ModbusSlaveContext(hr=block1)
 
 	devices = {
-				'0X000' : floor1
-				}
+	'0X01' : floor1
+	}
 
 	context = ModbusServerContext(devices, single=False)
 
@@ -45,8 +45,8 @@ def start_server(address="0.0.0.0", port=502):
 
 	# Random values
 
-	random_value(devices['0X000'], 0, 5)
-	print(devices['0X000'].getValues(3, 0, 5))
+	random_value(devices['0X01'], 3, 0, 5)
+	print(devices['0X01'].getValues(3, 0, 5))
 
 
 	# Identity
@@ -63,18 +63,19 @@ def start_server(address="0.0.0.0", port=502):
 	
 
 
-def random_value(slave, address=0, count=0):
+def random_value(device, function, address=0, count=0):
 	"""A function that randomize the value of the given registers
-	server: the istance of the server to use
-	address: the starting address of the registers
-	count: the number of register to randomize after the firs one
+	device: The istance of the slave to use
+	function: The function to use es. 0 for the coil 
+	address: The starting address of the registers
+	count: The number of register to randomize after the firs one
 	"""
 	if count == 0:
-		slave.setValues(3, address, [1])
+		device.setValues(function, address, [11])
 
 	else:
 		for _ in range(count):
-			slave.setValues(3, address, [1])
+			device.setValues(function, address, [11])
 			address += 1
 
 
