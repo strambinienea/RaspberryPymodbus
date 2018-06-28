@@ -24,20 +24,24 @@ def start_client(address, port=502):
 	port: the port of the server to witch the client is going to connect
 	"""
 	decoder = ClientDecoder()
-	is_close = False
+	closed = False
 
 	# Starting and connecting the client to the server
 	
 	client = ModbusTcpClient(address, port)
 	client.connect()
-	
-	while not is_close:
-		sleep(10)
-		print(write_hr_request(register_index(1, 'T', 1), client, randint(10, 30)))
-		write_hr_request(register_index(1, 'T', 2), client, randint(10, 30))
-		write_hr_request(register_index(1, 'B', 1), client, randint(10, 30))
-		write_hr_request(register_index(1, 'B', 1), client, randint(10, 30))
 		
+	while not closed:
+		values = []
+		values.append(write_hr_request(0, client, randint(10, 30)))
+		values.append(write_hr_request(1, client, randint(10, 30)))
+		values.append(write_hr_request(2, client, randint(10, 30)))
+		values.append(write_hr_request(3, client, randint(10, 30)))
+		values.append(write_hr_request(4, client, randint(10, 30)))
+		print(values)
+		sleep(50)
+			
+			
 	client.close()
 
 
@@ -52,7 +56,7 @@ def write_hr_request(address, client, value):
 	request = WriteSingleRegisterRequest(address, value, unit=0x01)
 	response = client.execute(request)
 	
-	return ("\n[" + now + "] " + str(response) + "\n")
+	return (str(response))
 
 
 def register_index(sector, type, index):
@@ -61,7 +65,7 @@ def register_index(sector, type, index):
 	type: A string that identifies the type of sensor (es. Thermometer - "T")
 	index: The index of the sensor (if there are moresensor of the same type)
 	"""
-	for line in open('./registers_suddivision.txt'):
+	for line in open('./registers_subdivision.txt'):
 		elements = line.split(',')
 
 		if eval(elements[0]) == sector and elements[1] == type and eval(elements[2]) == index:
