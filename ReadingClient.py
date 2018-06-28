@@ -37,42 +37,50 @@ def start_client(address, port=502):
 	close = False
 	while not close:
 		try:
-			if keyboard.is_pressed('q'):
+			if keyboard.is_pressed('q'): # Checking for the exit 
 				close = not close
-			elif keyboard.is_pressed('s'):		# Sector
+			
+			elif keyboard.is_pressed('s'): # Read the register by sector
 				try:
 					sector_in = int(input("Insert the sector index: "))
 					sector_ = read_register_by_sector(client, sector_in)
 					key_help()
 					print('\nSector '+str(sector_in)+': ')
+					
 					for i in range(len(sector_)):
 						print('\tSensor '+ str(i) + ': ' + str(sector_[i]))
 					print()
 				except:
 					key_help()
 					print('Input not valid, please retry: ')
-			elif keyboard.is_pressed('t'):		# Type
+			
+			elif keyboard.is_pressed('t'): # Read the register by type
 				try:
 					type_in = str(input("Insert the type of sensor letter: "))
 					type_ = read_register_by_type(client, type_in)
 					key_help()
 					print('\nType '+'"'+str(type_in)+'"'+': ')
+					
 					for i in range(len(type_)):
 						print('\tSensor '+ str(i) + ': ' + str(type_[i]))
 					print()
 				except:
 					key_help()
 					print('Input not valid, please retry: ')
-			elif keyboard.is_pressed('r'):		# Address
+			
+			elif keyboard.is_pressed('r'): # Read the register by his address
 				try:
 					address_in = int(input("Insert the register index: "))
 					count_in = input("Insert the number of registers you want to read (Press 'Enter' to read only one): ")
+					
+					# Cheking if the count is a number or not
 					if count_in	== "":
 						address_ = read_register_by_address(client, address_in)
 						key_help()
 						print('\nAddress '+str(address_in)+': ')
 						print('\tSensor: ' + str(address_[0]))
 						print()
+					
 					else:
 						address_ = read_register_by_address(client, address_in, int(count_in))
 						key_help()
@@ -83,6 +91,11 @@ def start_client(address, port=502):
 				except:
 					key_help()
 					print('Input not valid, please retry: ')
+			
+			#elif keyboard.is_pressed('m'):
+				#try:
+
+				#except:
 		except:
 			pass
 
@@ -169,12 +182,13 @@ def register_index(sector, type, index):
 def key_help():
 	"""Function that print the key help
 	"""
-	print('\n-------------------------------')
-	print('| Press "q" to quit:          |')
-	print('| Press "s" to read sector:   |')
-	print('| Press "t" to read type:     |')
-	print('| Press "r" to read register: |')
-	print('-------------------------------\n')
+	print('\n---------------------------------------')
+	print('| Press "q" to quit:         		   |')
+	print('| Press "s" to read sector: 			   |')
+	print('| Press "t" to read type:   			   |')
+	print('| Press "r" to read register:		   |')
+	print('| Press "m" for monitoring the sensors: |')
+	print('---------------------------------------\n')
 
 
 if __name__ == "__main__":
