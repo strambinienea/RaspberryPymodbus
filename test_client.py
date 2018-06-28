@@ -5,7 +5,7 @@ from pymodbus.register_read_message import ReadRegistersRequestBase, ReadHolding
 from pymodbus.factory import ClientDecoder
 from pymodbus.bit_read_message import ReadCoilsRequest, ReadCoilsResponse
 
-from time import localtime, asctime
+from time import localtime, asctime, sleep
 import logging
 import keyboard
 
@@ -31,12 +31,11 @@ def start_client(address, port=502):
 	client = ModbusTcpClient(address, port)
 	client.connect()
 
-	print(register_index(1, 'T', 1))
 	read_hr_request(register_index(1, 'T', 1), client)
 
 	client.close()
 
-def read_hr_request(address, client, count=None):
+def read_hr_request(address, client, count=1):
 	"""Function that read a holding register every 10 minutes
 	address: the starting address of the registers
 	count: the number of register to read after the first one
@@ -44,28 +43,22 @@ def read_hr_request(address, client, count=None):
 	"""
 	first = True
 	close = False
-	delay = 2
-	print('Press "q" to Quit: ')
+	delay = 5
+	print('\n----------------------\n'+'| Press "q" to Quit: |\n'+'----------------------\n')
 
 	# Loop start
 
 	while not close:
-		now = asctime(localtime()) # Current local time 
-		#time = localtime()
-		#now = str(time()[0]) + "-" + str(time()[1]) + "-" + str(time()[2]) + " " + str(time()[3]) +
+		now = asctime() # Current local time
 
-		if int(now.split(" ")[3].split(":")[1]) % delay == 0 and first or keyboard.is_pressed('a'):			#debug
+		if int(now.split(" ")[3].split(":")[1]) % delay == 0 and first:
 			
-			if count == None:
-				request = ReadHoldingRegistersRequest(address, 0, id=1)
-				response = client.execute(request)
-				print("[" + now + "] " + str(response))
-			else:
-				request = ReadHoldingRegistersRequest(address, count)
-				response = client.execute(request)
-				print("[" + now + "] " + str(response))
+			request = ReadHoldingRegistersRequest(address, count, unit=0x01)
+			response = client.execute(request)
+			print("\n[" + now + "] " + str(response.registers) + "\n")
 
 			first = not first
+			sleep(5)
 
 		elif int(now.split(" ")[3].split(":")[1]) % delay != 0 and not first:
 			first = True
