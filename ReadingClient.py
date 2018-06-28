@@ -183,10 +183,10 @@ def key_help():
 	"""Function that print the key help
 	"""
 	print('\n---------------------------------------')
-	print('| Press "q" to quit:         		   |')
-	print('| Press "s" to read sector: 			   |')
-	print('| Press "t" to read type:   			   |')
-	print('| Press "r" to read register:		   |')
+	print('| Press "q" to quit:                    |')
+	print('| Press "s" to read sector:             |')
+	print('| Press "t" to read type:               |')
+	print('| Press "r" to read register:           |')
 	print('| Press "m" for monitoring the sensors: |')
 	print('---------------------------------------\n')
 
