@@ -31,9 +31,9 @@ def start_server(address="0.0.0.0", port=502):
 
 
 
-	block1 = ModbusSequentialDataBlock(0, [0]*5)
+	block1 = ModbusSequentialDataBlock(0, [0]*4)
 	floor1 = ModbusSlaveContext(hr=block1)
-	block2 = ModbusSequentialDataBlock(5, [0]*5)
+	block2 = ModbusSequentialDataBlock(4, [0]*6)
 	floor2 = ModbusSlaveContext(hr=block2)
 
 	devices = {
@@ -48,13 +48,13 @@ def start_server(address="0.0.0.0", port=502):
 	# Random values
 
 
-	random_value(devices[0X01], 3, 0, 5)
-	if devices[0X01].validate(3, 0, 5):
-		print(devices[0X01].getValues(3, 0, 5))
+	random_value(devices[0X01], 3, 0, 4)
+	if devices[0X01].validate(3, 0, 4):
+		print(devices[0X01].getValues(3, 0, 4))
 
-	random_value(devices[0X02], 3, 5, 5)
-	if devices[0X02].validate(3, 5, 5):
-		print(devices[0X02].getValues(3, 5, 5))
+	random_value(devices[0X02], 3, 4, 6)
+	if devices[0X02].validate(3, 4, 6):
+		print(devices[0X02].getValues(3, 4, 6))
 
 
 	# Identity
