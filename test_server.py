@@ -7,6 +7,7 @@ from pymodbus.transaction import ModbusRtuFramer, ModbusAsciiFramer, ModbusBinar
 from random import randint
 import logging
 import keyboard
+from time import sleep
 
 # Log
 
@@ -25,19 +26,20 @@ def start_server(address="0.0.0.0", port=502):
 	address: the address of the server
 	port: the port of the server
 	"""
-
+	
 	# Context
 
-	#   thermometer1 = ModbusSequentialDataBlock(0, [0]*1)
-	#   thermometer2 = ModbusSequentialDataBlock(1, [0]*1)
-	#   barometer = ModbusSequentialDataBlock(2, [0]*1)
+
 
 	block1 = ModbusSequentialDataBlock(0, [0]*5)
 	floor1 = ModbusSlaveContext(hr=block1)
+	block2 = ModbusSequentialDataBlock(5, [0]*5)
+	floor2 = ModbusSlaveContext(hr=block2)
 
 	devices = {
-				'0X000' : floor1
-				}
+	0X01 : floor1,
+	0X02 : floor2
+	}
 
 	context = ModbusServerContext(devices, single=False)
 
@@ -45,8 +47,14 @@ def start_server(address="0.0.0.0", port=502):
 
 	# Random values
 
-	random_value(devices['0X000'], 0, 5)
-	print(devices['0X000'].getValues(3, 0, 5))
+
+	random_value(devices[0X01], 3, 0, 5)
+	if devices[0X01].validate(3, 0, 5):
+		print(devices[0X01].getValues(3, 0, 5))
+
+	random_value(devices[0X02], 3, 5, 5)
+	if devices[0X02].validate(3, 5, 5):
+		print(devices[0X02].getValues(3, 5, 5))
 
 
 	# Identity
@@ -60,21 +68,21 @@ def start_server(address="0.0.0.0", port=502):
 	# Starting server
 
 	server = StartTcpServer(context, identity, (address, port))
-	
 
 
-def random_value(slave, address=0, count=0):
+def random_value(device, function, address=0, count=0):
 	"""A function that randomize the value of the given registers
-	server: the istance of the server to use
-	address: the starting address of the registers
-	count: the number of register to randomize after the firs one
+	device: The istance of the slave to use
+	function: The function to use es. 0 for the coil 
+	address: The starting address of the registers
+	count: The number of register to randomize after the first one
 	"""
 	if count == 0:
-		slave.setValues(3, address, [1])
+		device.setValues(function, address, [randint(10, 30)])
 
 	else:
 		for _ in range(count):
-			slave.setValues(3, address, [1])
+			device.setValues(function, address, [randint(10, 30)])
 			address += 1
 
 
