@@ -38,6 +38,11 @@ def start_client(address, port=502):
 		values.append(write_hr_request(2, client, randint(10, 30)))
 		values.append(write_hr_request(3, client, randint(10, 30)))
 		values.append(write_hr_request(4, client, randint(10, 30)))
+		values.append(write_hr_request(5, client, randint(10, 30)))
+		values.append(write_hr_request(6, client, randint(10, 30)))
+		values.append(write_hr_request(7, client, randint(10, 30)))
+		values.append(write_hr_request(8, client, randint(10, 30)))
+		values.append(write_hr_request(9, client, randint(10, 30)))
 		print(values)
 		sleep(50)
 			
