@@ -29,7 +29,7 @@ def start_client(address, port=502):
 	client = ModbusTcpClient(address, port)
 	client.connect()
 		
-	while not True:
+	while True:
 		values = []
 		values.append(write_hr_request(0, client, randint(10, 30)))
 		values.append(write_hr_request(1, client, randint(10, 30)))
