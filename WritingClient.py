@@ -62,4 +62,4 @@ def write_hr_request(address, client, value):
 
 	
 if __name__ == "__main__":
-	start_client('192.168.9.109', 502)
+	start_client('192.168.9.113', 502)
