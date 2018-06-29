@@ -18,20 +18,18 @@ log.setLevel(logging.DEBUG)
 
 # Defining server function
 
+
 def start_client(address, port=502):
 	"""Function that start a client
 	address: the address to witch the client is going to connect
 	port: the port of the server to witch the client is going to connect
 	"""
-	decoder = ClientDecoder()
-	closed = False
-
 	# Starting and connecting the client to the server
 	
 	client = ModbusTcpClient(address, port)
 	client.connect()
 		
-	while not closed:
+	while not True:
 		values = []
 		values.append(write_hr_request(0, client, randint(10, 30)))
 		values.append(write_hr_request(1, client, randint(10, 30)))
@@ -57,26 +55,10 @@ def write_hr_request(address, client, value):
 	client: the istance of the client to use
 	"""
 
-	now = asctime() # Current local time
 	request = WriteSingleRegisterRequest(address, value, unit=0x01)
 	response = client.execute(request)
 	
 	return (str(response))
-
-
-def register_index(sector, type, index):
-	"""Function that return the register index of a specific sensor
-	sector: The number of sector where the sensor is installed
-	type: A string that identifies the type of sensor (es. Thermometer - "T")
-	index: The index of the sensor (if there are moresensor of the same type)
-	"""
-	for line in open('./registers_subdivision.txt'):
-		elements = line.split(',')
-
-		if eval(elements[0]) == sector and elements[1] == type and eval(elements[2]) == index:
-			return eval(elements[3])
-
-	return None
 
 	
 if __name__ == "__main__":

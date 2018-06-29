@@ -29,8 +29,6 @@ def start_server(address="0.0.0.0", port=502):
 	
 	# Context
 
-
-
 	block1 = ModbusSequentialDataBlock(0, [0]*10000)
 	floor1 = ModbusSlaveContext(hr=block1)
 
