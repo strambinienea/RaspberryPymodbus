@@ -180,4 +180,5 @@ The `ReadHoldingRegistersRequest` function require not only the address of the r
 return response.registers
 ```
 So this is the end of this quick basic introduction to pymodbus, this is not a perfect guide so if you find any error please send an isue on github and we will try to resolve it. We hope this guide has been usefull!!
-Strambini Enea & Tezza Giacomo
+
+-Strambini Enea & Tezza Giacomo
