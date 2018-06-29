@@ -31,7 +31,7 @@ from pymodbus.transaction import ModbusRtuFramer, ModbusAsciiFramer, ModbusBinar
 from pymodbus.datastore import ModbusSequentialDataBlock, ModbusSlaveContext, ModbusServerContextì
 from pymodbus.register_read_message import ReadRegistersRequestBase, ReadHoldingRegistersRequest, ReadHoldingRegistersResponse
 ```
-When you have imported all of these function we can start writing the code for the server, the firs line will be the line for the log, this will help troughout the project, understanding all the steps the server is doing this will also help you with some problem you may encounter during the realization of the Server.
+When you have imported all of these function we can start writing the code for the server, the first line will be the line for the log, this will help troughout the project understanding all the steps the server is doing, this will also help you with some problem you may encounter during the realization of the Server.
 
 ```python
 # Log
@@ -60,7 +60,7 @@ devices = {
 
 context = ModbusServerContext(devices, single=False)
 ```
-The block1 variable contains a `ModbusSequentialDataBlock` type of object, this is used by the next function, `ModbusSlaveContext()` to create a Slave Context, a object that contains the information of the register, how much they are, their type and address, in this case there are 10000 registers that start from the address 0 and they are all Holding Register type. We will the make a dictionary that contains all of our `ModbusSlaveContext` object, everyone with his own ID defined, in this case we only needed one.
+The `block1`  variable contains a `ModbusSequentialDataBlock` type of object, this is used by the next function, `ModbusSlaveContext()` to create a Slave Context, a object that contains the information of the register, how much they are, their type and address, in this case there are 10000 registers that start from the address 0 and they are all Holding Register type. We will the make a dictionary that contains all of our `ModbusSlaveContext` object, everyone with his own ID defined, in this case we only needed one.
 Finally we have the context variable that contain a `ModbusServerContext` object, created by the homonym function, this uses the device dictionary we created before and create a Server Context, that is like a global Slave Context, with all the information of all the Slave Context like object in the server.
 The Client will then use the ID found in the device dictionary to request to the slave to do something, like reading or writing on a register.
 The next step is an optional aesthetic feature, so do as you like.
@@ -170,7 +170,7 @@ def read_register_by_address(client, address, count=1):
 	count: the number of register to read after the first one
 	"""
 ```
-We will then do like we have done with the `write_hr_register()` function, we will create a request and the execute it.
+We will then do like we have done with the `write_hr_register()` function, we will create a request and then execute it.
 ```python
 request = ReadHoldingRegistersRequest(address, count, unit=0x01)
 response = client.execute(request)
