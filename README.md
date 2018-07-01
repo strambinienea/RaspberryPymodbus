@@ -7,9 +7,10 @@ A simple repository with a couple of example of Modbus TCP server and client wri
 # Requiriments
 
 - Python 3+
-- pymodbus
-- logging
+- pymodbus[(link)](https://github.com/riptideio/pymodbus "Pymodbus repository on Github")
 - keyboard
+- logging
+
 
 -made by
 Strambini Enea & Tezza Giacomo
