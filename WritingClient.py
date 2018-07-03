@@ -8,6 +8,11 @@ from pymodbus.register_write_message import WriteSingleRegisterRequest
 from pymodbus.factory import ClientDecoder
 from pymodbus.bit_read_message import ReadCoilsRequest, ReadCoilsResponse
 from time import localtime, asctime, sleep
+from pymodbus.constants import Endian
+from pymodbus.payload import BinaryPayloadDecoder
+from pymodbus.payload import BinaryPayloadBuilder
+from collections import OrderedDict
+from pymodbus.compat import iteritems
 
 # Log
 
@@ -28,37 +33,126 @@ def start_client(address, port=502):
 	
 	client = ModbusTcpClient(address, port)
 	client.connect()
-		
+	file = open('/home/pi/Desktop/Tridium/Data/letture.csv', 'w')
+	file.close()
+	
 	while True:
-		values = []
-		values.append(write_hr_request(0, client, randint(10, 30)))
-		values.append(write_hr_request(1, client, randint(10, 30)))
-		values.append(write_hr_request(2, client, randint(10, 30)))
-		values.append(write_hr_request(3, client, randint(10, 30)))
-		values.append(write_hr_request(4, client, randint(10, 30)))
-		values.append(write_hr_request(5, client, randint(10, 30)))
-		values.append(write_hr_request(6, client, randint(10, 30)))
-		values.append(write_hr_request(7, client, randint(10, 30)))
-		values.append(write_hr_request(8, client, randint(10, 30)))
-		values.append(write_hr_request(9, client, randint(10, 30)))
-		print(values)
-		sleep(50)
-			
-			
+		write_reg_csv('/home/pi/Desktop/Tridium/Data/dati_Trento.csv', '/home/pi/Desktop/Tridium/Data/letture.csv', client)
+				
+	#file.close()
 	client.close()
 
 
 def write_hr_request(address, client, value):
-	"""Function that read a holding register every 10 minutes
+	"""Function that write a holding register every 10 minutes
 	address: the starting address of the registers
 	value: the value to write on the register
 	client: the istance of the client to use
 	"""
-
 	request = WriteSingleRegisterRequest(address, value, unit=0x01)
 	response = client.execute(request)
 	
+	
+	
 	return (str(response))
+	
+
+def write_reg_csv(start_file, log_file, client):
+	"""Functoin that, gathered all the data from the start_file,
+	write a log in the log_file and write data on registers
+	reg 0X00: Current value
+	reg 0X100: Daily sum
+	reg 0X101: Monthly sum
+	reg 0X102: Grand total
+	start_file: Path of the file from wich read the data
+	log_file: Path of the file in wich write down the log(erase every time it's restated)
+	client: The instance of the client that send the request
+	"""
+	
+	first = True
+	
+	
+	for row in open(start_file):
+		
+		if first:
+			first = False
+			
+		else:
+			float_(round(eval(row.split(';')[3]), 3), 0, client)
+			float_(round(round(eval(row.split(';')[4])) / 10000, 5), 2, client)
+			float_(round(round(eval(row.split(';')[5])) / 10000, 5), 4, client)
+			number = round(eval(row.split(';')[3]), 3)
+
+			sleep(60)
+	
+
+def float_(number, reg, client):
+	number = str(number)
+	list_ = number.split('.')
+	print(list_)
+	write_hr_request(reg, client, int(list_[0]))
+	write_hr_request(reg + 1, client, int(list_[1]))
+
+
+
+def daily_sum(filename, address, client):
+	"""Function that sum all the values in the file, the sum is erased daily
+	filename: Path of the file from wich read the data
+	"""
+	
+	file = open(filename, 'r')
+
+	total = 0
+	old_total = 0
+	data_split = asctime().split(' ')
+
+	
+	for row in file:
+		if data_split[1] in row and data_split[3] in row:
+			if total + eval(row.split(';')[-1]) >= 2 ** 16:
+				total += eval(row.split(';')[-1])
+				digits = total.split('.')
+				write_hr_request(100, client, digits[0])
+	
+	file.close()
+	
+	return total * 1000
+	
+	
+def monthly_sum(filename):
+	"""Function that sum all the values in the file, the sum is erased monthly
+	filename: Path of the file from wich read the data
+	"""
+	
+	file = open(filename, 'r')
+	total = 0
+	data_split = asctime().split(' ')
+	
+	for row in file:
+		if data_split[1] in row:
+			total += eval(row.split(';')[-1])
+			digits = str(total).split('.')
+			
+	
+	file.close()
+	
+
+
+
+def total_sum(filename):
+	"""Function that sum all the values in the file, the sum is erased at the reboot
+	filename: Path of the file from wich read the data
+	"""
+	
+	file = open(filename, 'r')
+	total = 0
+	
+	for row in file:
+		total += eval(row.split(';')[-1])
+	
+	file.close()
+	
+	return total * 1000
 
 	
 if __name__ == "__main__":
