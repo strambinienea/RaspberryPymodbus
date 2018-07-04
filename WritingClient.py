@@ -70,7 +70,8 @@ def write_reg_csv(start_file, log_file, client):
 	"""
 	
 	first = True
-	
+	energy_h = 131644850
+	reactive_energy_h = 57175898
 	
 	for row in open(start_file):
 		
@@ -78,15 +79,21 @@ def write_reg_csv(start_file, log_file, client):
 			first = False
 			
 		else:
+			
+			# 3 main value
 			float_(round(eval(row.split(';')[3]), 3), 0, client)
 			float_(round(round(eval(row.split(';')[4])) / 10000, 5), 2, client)
 			float_(round(round(eval(row.split(';')[5])) / 10000, 5), 4, client)
-			number = round(eval(row.split(';')[3]), 3)
-
+			
+			# the average 
+			float_(round(round(hour_energy(energy_h, eval(row.split(';')[4]))) / 10000, 4), 50, client)
+			float_(round(round(hour_energy(reactive_energy_h, eval(row.split(';')[4]))) / 10000, 4), 52, client)			
+			
 			sleep(60)
 	
 
 def float_(number, reg, client):
+	"""Function that write a float number (16bit) in 2 registers"""
 	number = str(number)
 	list_ = number.split('.')
 	print(list_)
@@ -94,65 +101,10 @@ def float_(number, reg, client):
 	write_hr_request(reg + 1, client, int(list_[1]))
 
 
+def hour_energy(start, value):
+	"""Function that calculate the energy used every quarter of an hour"""
+	return start + value / 4
 
-def daily_sum(filename, address, client):
-	"""Function that sum all the values in the file, the sum is erased daily
-	filename: Path of the file from wich read the data
-	"""
-	
-	file = open(filename, 'r')
-
-	total = 0
-	old_total = 0
-	data_split = asctime().split(' ')
-
-	
-	for row in file:
-		if data_split[1] in row and data_split[3] in row:
-			if total + eval(row.split(';')[-1]) >= 2 ** 16:
-				total += eval(row.split(';')[-1])
-				digits = total.split('.')
-				write_hr_request(100, client, digits[0])
-	
-	file.close()
-	
-	return total * 1000
-	
-	
-def monthly_sum(filename):
-	"""Function that sum all the values in the file, the sum is erased monthly
-	filename: Path of the file from wich read the data
-	"""
-	
-	file = open(filename, 'r')
-	total = 0
-	data_split = asctime().split(' ')
-	
-	for row in file:
-		if data_split[1] in row:
-			total += eval(row.split(';')[-1])
-			digits = str(total).split('.')
-			
-	
-	file.close()
-	
-
-
-
-def total_sum(filename):
-	"""Function that sum all the values in the file, the sum is erased at the reboot
-	filename: Path of the file from wich read the data
-	"""
-	
-	file = open(filename, 'r')
-	total = 0
-	
-	for row in file:
-		total += eval(row.split(';')[-1])
-	
-	file.close()
-	
-	return total * 1000
 
 	
 if __name__ == "__main__":
