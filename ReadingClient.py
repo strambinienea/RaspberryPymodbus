@@ -1,13 +1,16 @@
 # Import
-
-from pymodbus.client.sync import ModbusTcpClient
-from pymodbus.register_read_message import ReadRegistersRequestBase, ReadHoldingRegistersRequest, ReadHoldingRegistersResponse
-from pymodbus.factory import ClientDecoder
-from pymodbus.bit_read_message import ReadCoilsRequest, ReadCoilsResponse
-
-from time import localtime, asctime, sleep
 import logging
 import keyboard
+from time import localtime, asctime, sleep
+from pymodbus.factory import ClientDecoder
+from pymodbus.client.sync import ModbusTcpClient
+from pymodbus.bit_read_message import ReadCoilsRequest, ReadCoilsResponse
+from pymodbus.register_read_message import ReadRegistersRequestBase, ReadHoldingRegistersRequest, ReadHoldingRegistersResponse
+
+
+
+
+
 
 # Log
 

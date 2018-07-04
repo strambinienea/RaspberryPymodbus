@@ -2,17 +2,17 @@
 import logging
 import keyboard
 from random import randint
-from pymodbus.client.sync import ModbusTcpClient
-from pymodbus.register_read_message import ReadRegistersRequestBase, ReadHoldingRegistersRequest, ReadHoldingRegistersResponse
-from pymodbus.register_write_message import WriteSingleRegisterRequest
-from pymodbus.factory import ClientDecoder
-from pymodbus.bit_read_message import ReadCoilsRequest, ReadCoilsResponse
-from time import localtime, asctime, sleep
+from collections import OrderedDict
 from pymodbus.constants import Endian
+from pymodbus.compat import iteritems
+from pymodbus.factory import ClientDecoder
+from time import localtime, asctime, sleep
+from pymodbus.client.sync import ModbusTcpClient
 from pymodbus.payload import BinaryPayloadDecoder
 from pymodbus.payload import BinaryPayloadBuilder
-from collections import OrderedDict
-from pymodbus.compat import iteritems
+from pymodbus.register_write_message import WriteSingleRegisterRequest
+from pymodbus.bit_read_message import ReadCoilsRequest, ReadCoilsResponse
+from pymodbus.register_read_message import ReadRegistersRequestBase, ReadHoldingRegistersRequest, ReadHoldingRegistersResponse
 
 # Log
 

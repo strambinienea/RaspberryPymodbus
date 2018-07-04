@@ -1,13 +1,13 @@
 # Import
-from pymodbus.register_read_message import ReadRegistersRequestBase, ReadHoldingRegistersRequest, ReadHoldingRegistersResponse
-from pymodbus.server.sync import StartTcpServer, ModbusBaseRequestHandler
-from pymodbus.device import ModbusDeviceIdentification
-from pymodbus.datastore import ModbusSequentialDataBlock, ModbusSlaveContext, ModbusServerContext
-from pymodbus.transaction import ModbusRtuFramer, ModbusAsciiFramer, ModbusBinaryFramer
-from random import randint
 import logging
 import keyboard
 from time import sleep
+from random import randint
+from pymodbus.device import ModbusDeviceIdentification
+from pymodbus.server.sync import StartTcpServer, ModbusBaseRequestHandler
+from pymodbus.transaction import ModbusRtuFramer, ModbusAsciiFramer, ModbusBinaryFramer
+from pymodbus.datastore import ModbusSequentialDataBlock, ModbusSlaveContext, ModbusServerContext
+from pymodbus.register_read_message import ReadRegistersRequestBase, ReadHoldingRegistersRequest, ReadHoldingRegistersResponse
 
 # Log
 
