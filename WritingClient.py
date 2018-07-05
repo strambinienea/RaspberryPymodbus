@@ -89,7 +89,12 @@ def write_reg_csv(start_file, log_file, client):
 			float_(round(round(hour_energy(energy_h, eval(row.split(';')[4]))) / 10000, 4), 50, client)
 			float_(round(round(hour_energy(reactive_energy_h, eval(row.split(';')[4]))) / 10000, 4), 52, client)			
 			
-			sleep(60)
+			# sensori
+			write_hr_request(10, client, randint(0, 40))
+			write_hr_request(11, client, randint(0, 40))
+			write_hr_request(12, client, randint(0, 40))
+			
+			sleep(60 * 15)
 	
 
 def float_(number, reg, client):
@@ -108,4 +113,4 @@ def hour_energy(start, value):
 
 	
 if __name__ == "__main__":
-	start_client('192.168.9.116', 502)
+	start_client('192.168.9.10', 502)
