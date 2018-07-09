@@ -12,7 +12,7 @@ from pymodbus.payload import BinaryPayloadDecoder
 from pymodbus.payload import BinaryPayloadBuilder
 from pymodbus.register_write_message import WriteSingleRegisterRequest
 from pymodbus.bit_read_message import ReadCoilsRequest, ReadCoilsResponse
-from pymodbus.register_read_message import ReadRegistersRequestBase, ReadHoldingRegistersRequest, ReadHoldingRegistersResponse
+from pymodbus.register_read_message import ReadHoldingRegistersRequest
 
 # Log
 
@@ -35,10 +35,10 @@ def start_client(address, port=502):
 	client.connect()
 	file = open('/home/pi/Desktop/Tridium/Data/letture.csv', 'w')
 	file.close()
-	
-	while True:
-		write_reg_csv('/home/pi/Desktop/Tridium/Data/dati_Trento.csv', '/home/pi/Desktop/Tridium/Data/letture.csv', client)
-				
+	count = 0
+	while True:	
+		write_reg_csv('/home/pi/Desktop/Tridium/Data/dati_Trento.csv', '/home/pi/Desktop/Tridium/Data/letture.csv', client, count)
+			
 	#file.close()
 	client.close()
 
@@ -57,7 +57,7 @@ def write_hr_request(address, client, value):
 	return (str(response))
 	
 
-def write_reg_csv(start_file, log_file, client):
+def write_reg_csv(start_file, log_file, client, count):
 	"""Functoin that, gathered all the data from the start_file,
 	write a log in the log_file and write data on registers
 	reg 0X00: Current value
@@ -93,8 +93,11 @@ def write_reg_csv(start_file, log_file, client):
 			write_hr_request(10, client, randint(0, 40))
 			write_hr_request(11, client, randint(0, 40))
 			write_hr_request(12, client, randint(0, 40))
+						
 			
-			sleep(60 * 15)
+			count += 1
+			write_hr_request(7, client, count)	
+			sleep(6)
 	
 
 def float_(number, reg, client):
@@ -113,4 +116,4 @@ def hour_energy(start, value):
 
 	
 if __name__ == "__main__":
-	start_client('192.168.9.10', 502)
+	start_client('192.168.9.121', 502)
