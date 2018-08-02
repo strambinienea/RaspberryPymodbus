@@ -17,4 +17,8 @@ In order to read the register value you will need to doubleclick on the point fo
 
 You should now have a functioning Client that connect to the Server and is able to read the registers, you could now use all the math function found in the ktControll palette to process the data as you like.
 
+#### Exporting histories into MySql database
+Start by crating a `RdbmsNetworkMySQL` in the station, inside the network create a new device, a `MySQLDatabase`, this is the device that is going to be writing down the data on he MySql database, but first you will need to configure it, double-click on it, in the IP section you must write the ip of the Sql database, in the username and password field you need to write the username and passwordin order to acces to the database, the last thing you must do is write the name of the database, in the `Database Name`.Now you can save the data, in order to do that you will need to open the `Histories` tab inside the `MySQLDatabase` device, here you can create the object that will write on the database. Click on the `New` button on the bottom of the window and add `MySQLHistoryExport`, a new window will open, here you can write the name of the object, the ID of the history you want to save and how many times it will save it. In order to find the History ID you will need to open the `History` tab of the Station, inside there you will need to find the history you want to save and open it in the AXproperty view, here you will find the history ID. ONce you have wrote it downyou can save the new object. 
+
+
 -Strambini Enea & Tezza Giacomo
