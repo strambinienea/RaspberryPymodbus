@@ -1,5 +1,7 @@
 # An easy guide for the implementation of pymodbus TCP Server and Client
 
+Before you start read this guide if you don't know the basic of the ModbusTCP protocol go and read them, they are exential to understand all of what is explained in the guide.
+
 #### Requirements
 - Python 3+
 - pymodbus[(link)](https://github.com/riptideio/pymodbus "Pymodbus repository on Github")
@@ -19,17 +21,24 @@ pip install logging
 ```
 
 #### Server
-Open a new python file and start importing the necessary function
+Open a new python file and start importing the necessary function and libraies.
+A brief explanation:
+- logging: Is used to make a log and help with the debug
+- keyboard: Is used to receive input from the keyboard
+- randint: Fuction that output a random integer
+- sleep: It's a delay, mesured in seconds
+- ModbusDeviceIdentification: Used for the identity of the Server(better explained later)
+- StartTcpServer: Used to start the Server, a function contained in the Modbus library
+- ModbusSequentialDataBock: Function that extablish a block made by contiguous registers
+- ModbusSlaveContext and ModbusServerContext: Create a context-type object, better explained later
 ```python
 import logging
 import keyboard
 from random import randint
 from time import sleep
 from pymodbus.device import ModbusDeviceIdentification
-from pymodbus.server.sync import StartTcpServer, ModbusBaseRequestHandler
-from pymodbus.transaction import ModbusRtuFramer, ModbusAsciiFramer, ModbusBinaryFramer
-from pymodbus.datastore import ModbusSequentialDataBlock, ModbusSlaveContext, ModbusServerContextì
-from pymodbus.register_read_message import ReadRegistersRequestBase, ReadHoldingRegistersRequest, ReadHoldingRegistersResponse
+from pymodbus.server.sync import StartTcpServer
+from pymodbus.datastore import ModbusSequentialDataBlock, ModbusSlaveContext, ModbusServerContext
 ```
 When you have imported all of these function we can start writing the code for the server, the first line will be the one for the log, this will help troughout the project understanding all the steps the server is doing, it will also help you with some problem you may encounter during the realization of the Server.
 
@@ -41,7 +50,7 @@ logging.basicConfig(format=FORMAT)
 log = logging.getLogger()
 log.setLevel(logging.DEBUG)
 ```
-After the log we will write the function to start the server
+After the log we will write the function to start the server, this is called everytime you want to start the server.
 ```python
 def start_server(address="0.0.0.0", port=502):
 	"""A function that start the server
@@ -49,7 +58,7 @@ def start_server(address="0.0.0.0", port=502):
 	port: the port of the server
 	"""
 ```
-Inside this function we will create and allocate the various block of registers, we will decide what type they are and what address they will have.
+Inside this function we will create and allocate the various blocks of registers.
 ```python
 block1 = ModbusSequentialDataBlock(0, [0]*10000)
 floor1 = ModbusSlaveContext(hr=block1)
@@ -60,7 +69,7 @@ devices = {
 
 context = ModbusServerContext(devices, single=False)
 ```
-The `block1`  variable contains a `ModbusSequentialDataBlock` type of object, this is used by the next function, `ModbusSlaveContext()` to create a Slave Context, a object that contains the information of the register, how much they are, their type and address, in this case there are 10000 registers that start from the address 0 and they are all Holding Register type. We will then make a dictionary that contains all of our `ModbusSlaveContext` object, everyone with his own ID defined, in this case we only needed one.
+The `block1`  variable contains a `ModbusSequentialDataBlock` type of object, a block made of contiguous registers, this is used by the next function, `ModbusSlaveContext()` to create a Slave Context, a object that contains the information of the register, how much they are, their type and address, in this case there are 10000 registers that start from the address 0 and they are all Holding Register type. We will then make a dictionary that contains all of our `ModbusSlaveContext` object, everyone with his own ID defined, in this case we only needed one.
 Finally we have the context variable that contain a `ModbusServerContext` object, created by the homonym function, this uses the device dictionary we created before and create a Server Context, that is like a global Slave Context, with all the information of all the Slave Context like object in the server.
 The Client will then use the ID found in the device dictionary to request to the slave to do something, like reading or writing on a register.
 The next step is an optional aesthetic feature, so do as you like.
@@ -82,17 +91,19 @@ if __name__ == "__main__":
 ```
 
 #### Client
-The client is used to write and read the registers, to start write the code you will import some function and define the log, as you did with the Server. 
+The Client is used to write and read the registers, to start you will import some function and define the log, as you did with the Server. 
+A brief explanation:
+- ModbusTcpClient: Function that is used to start the connection between the Client and the provided Server
+- WriteSingleRegistersRequest: Function that is used to write a value on a single register
+- ReadHoldingRegistersRequest: Function that is used to read a value from a Holding Register 
 ```python
 import logging
 import keyboard
 from random import randint
-from time import localtime, asctime, sleep
-from pymodbus.factory import ClientDecoder
+from time import sleep
 from pymodbus.client.sync import ModbusTcpClient
 from pymodbus.register_write_message import WriteSingleRegisterRequest
-from pymodbus.bit_read_message import ReadCoilsRequest, ReadCoilsResponse
-from pymodbus.register_read_message import ReadRegistersRequestBase, ReadHoldingRegistersRequest, ReadHoldingRegistersResponse
+from pymodbus.register_read_message import ReadHoldingRegistersRequest
 ```
 ```python
 # Log
@@ -102,7 +113,7 @@ logging.basicConfig(format=FORMAT)
 log = logging.getLogger()
 log.setLevel(logging.DEBUG)
 ```
-We will then start writing down the functions needed by the client, one of them is obviously the one that allow us to start it.
+We will then start writing down the functions needed by the Client, one of them is obviously the one that allow us to start it.
 ```python
 def start_client(address, port=502):
 	"""Function that start a client
@@ -110,15 +121,15 @@ def start_client(address, port=502):
 	port: the port of the server to witch the client is going to connect
 	"""
 ```
-we will start by creating the client himself with the function `ModbusTcpClient()`
+we will start by creating the Client himself with the function `ModbusTcpClient()`
 ```python
 client = ModbusTcpClient(address, port)
 ```
-this function require as parameters the address and the port of the server you want to connect to, we will the call a `ModbusTcpClient` object function, `connect()` that will finally connect to the server.
+this function require as parameters the address and the port of the Server you want to connect to, we will then call a `ModbusTcpClient` object function, `connect()`, that will finally connect the Client to the Server.
 ```python
 client.connect()
 ```
-The client is now connected to the server and we can comunicate with it.
+The Client is now connected to the server and we can comunicate with it.
 We needed a loop for continuously reading and writing down the registers so we used `while` to create a reiteration and calling a writing function, this is an example valid for our case but might not be usefull for yours. 
 ```python
 while not True:
@@ -150,7 +161,7 @@ def write_hr_request(address, client, value):
 	client: the istance of the client to use
 	"""
 ```
-We need to send a request to the server so we use the function `WriteSingleRegisterRequest()` function to create an object that is then used by the `execute()` function to request the writing action to the server.
+We need to send a request to the Server so we use the function `WriteSingleRegisterRequest()` function to create an object that is then used by the `execute()` function to request the writing action to the Server.
 ```python
 request = WriteSingleRegisterRequest(address, value, unit=0x01)
 response = client.execute(request)
